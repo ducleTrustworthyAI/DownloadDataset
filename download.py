@@ -13,35 +13,38 @@ dictation = {
         "2.2": "wget -r -N -c -np --user lengocduc195 --ask-password https://physionet.org/files/mimiciv/2.2/"
     },
     "mimiciii": {
-        "1.4": "wget -r -N -c -np --user lengocduc195 --ask-password https://physionet.org/files/mimiciii/1.4/"
+        "1-4": "wget -r -N -c -np --user lengocduc195 --ask-password https://physionet.org/files/mimiciii/1.4/"
     },
     "mimic-cxr-jpg": {
-        "2.1.0": "wget -r -N -c -np --user lengocduc195 --ask-password https://physionet.org/files/mimic-cxr-jpg/2.1.0/"
+        "2-1-0": "wget -r -N -c -np --user lengocduc195 --ask-password https://physionet.org/files/mimic-cxr-jpg/2.1.0/"
     },
     "cxr-pro": {
-        "1.0.0": "wget -r -N -c -np --user lengocduc195 --ask-password https://physionet.org/files/cxr-pro/1.0.0/"
+        "1-0-0": "wget -r -N -c -np --user lengocduc195 --ask-password https://physionet.org/files/cxr-pro/1.0.0/"
     }
 }
 
 def main():
     parser = argparse.ArgumentParser(description='Download data using wget based on input')
-    parser.add_argument('input', type=str, help='Input to determine what to download')
+    parser.add_argument('-dataset', type=str, help='Input to determine what to download')
+    parser.add_argument('-version', type=str, help='Input to determine what to download')
+    parser.add_argument('-split', type=str, help='Input to determine what to download', default=None)
     args = parser.parse_args()
 
-    input_tokens = args.input.split()
-    if input_tokens[0] in dictation.keys():
-        if input_tokens[1] in dictation[input_tokens[0]].keys():
-            if len(input_tokens) == 2:
-                command = dictation[input_tokens[0]][input_tokens[1]]
+    dataset_tokens = args.dataset
+    version_tokens = args.version
+    split_tokens = args.split
+    if dataset_tokens in dictation.keys():
+        if version_tokens in dictation[dataset_tokens].keys():
+            if split_tokens==None:
+                command = dictation[dataset_tokens][version_tokens]
                 print(f'Downloading IMAGENET TRAIN data...')
                 subprocess.run(command, shell=True)
                 print('Download completed.')
-            elif input_tokens[2] in dictation[input_tokens[0]][input_tokens[1]].keys():
-                if len(input_tokens) == 3:
-                    command = dictation[input_tokens[0]][input_tokens[1]][input_tokens[2]]
-                    print(f'Downloading IMAGENET TRAIN data...')
-                    subprocess.run(command, shell=True)
-                    print('Download completed.')
+            else:
+                command = dictation[dataset_tokens][version_tokens][split_tokens]
+                print(f'Downloading IMAGENET TRAIN data...')
+                subprocess.run(command, shell=True)
+                print('Download completed.')
         
     elif args.input.lower() == '--help':
         print(dictation)
